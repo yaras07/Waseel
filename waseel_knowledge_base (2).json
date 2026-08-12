@@ -1,0 +1,641 @@
+{
+  "meta": {
+    "purpose": "Medication Knowledge Base for Waseel app — used by the LLM/TTS layer to generate spoken Saudi-dialect medication guidance for visually impaired patients.",
+    "structure_reference": "Matches 'Data Layer > Medication Knowledge Base' from Waseel Technical Architecture doc: Drug Details (Trade name, generic name, dosage instructions in Saudi dialect) + Symptoms & Mood (post-intake side effects).",
+    "source_of_drug_identity": "Trade name, generic name, dosage form, strength and legal status (Rx/OTC) verified against SFDA's official drug registration system (sdi.sfda.gov.sa) — see sfda_packaging_data.json for registration numbers and full regulatory data.",
+    "source_of_dosing_and_side_effects": "Standard dosing and common side effects are drawn from the products' approved patient information leaflets (PIL) / general pharmacological knowledge, then phrased in conversational Saudi dialect for TTS output. This is general educational guidance, NOT a medical prescription — the app should always tell the patient to confirm with their doctor/pharmacist, especially for Rx items.",
+    "important_note_for_team": "Dosage instructions here are TEMPLATE/DRAFT phrasing for the TTS pipeline. Before production use, have a pharmacist on the team review each line for accuracy, since incorrect dosage guidance is a safety risk for visually impaired users who cannot double-check the label themselves.",
+    "accessibility_principle": "Since Waseel's end users are visually impaired, dosage instructions never assume the patient can read the package, see a color, or visually confirm anything; quantities are phrased for spoken/tactile understanding (finger-tip amount, tablet counts) rather than visual comparisons. Each entry in sideEffects and seriousWarningSigns is tagged with detectableBy: 'patient' (the patient can feel/sense it themselves — pain, nausea, itching, dizziness, dryness) or 'caregiver_or_touch' (primarily identified by sight — rash appearance, swelling, bruising, jaundice/yellowing) so the app's Post-Dose Check-In can ask the patient directly for 'patient' symptoms, and prompt a caregiver check (visit/call/photo to caregiver) for 'caregiver_or_touch' symptoms instead of asking the blind patient to self-assess something they cannot see.",
+    "adverseEventReportingContact": {
+      "note": "National Pharmacovigilance Center (المركز الوطني للتيقظ والسلامة الدوائية) — for reporting side effects to SFDA. Same contact applies to all medications; not duplicated per-drug. Intended for a general 'report a side effect' screen in the app, not tied to a specific medication record.",
+      "phone_toll_free": "8002490000",
+      "phone_direct": "+966-11-203-2317 / 2334 / 2340 / 2354 / 2356",
+      "fax": "+966-11-205-7662",
+      "email": "npc.drug@sfda.gov.sa",
+      "website": "www.sfda.gov.sa/npc"
+    },
+    "dosage_instructions_format": "Each dosageInstructions_saudi_dialect now opens with a short purpose/category statement (e.g. 'this is a blood-pressure medicine', 'this is a pain reliever') before the actual dosing steps. This matters specifically for Waseel's OCR flow: when a blind patient scans a bottle, the FIRST thing spoken should let them confirm which medicine they're holding, before hearing dosing details — otherwise a patient with several bottles has no way to distinguish them by sound alone. The same purpose phrase is also stored separately as purposeCategory for quick display/lookup without parsing the full instructions text."
+  },
+  "medications": [
+    {
+      "id": "MED-001",
+      "tradeName": {
+        "ar": "فيوسيباكت",
+        "en": "Fusibact Cream 2% W-W"
+      },
+      "genericName": {
+        "ar": "حمض الفيوسيديك",
+        "en": "Fusidic Acid"
+      },
+      "dosageForm": "كريم للجلد",
+      "strength": "2%",
+      "legalStatus": "Rx",
+      "dosageInstructions_saudi_dialect": "هذا مضاد حيوي موضعي للجلد. هذا الكريم يستخدم على الجلد بس، لا تبلعه ولا تحطه جوا جسمك. اغسل يدينك قبل ما تحطه. ادهنه بلطف على المكان المصاب، وإذا كنت تستخدمه على الوجه احذر ما يلامس العين — لو صار كذا غسّل العين فورًا بماء بارد. يستخدم عادة من ٣ إلى ٤ مرات باليوم، بس اتبع بالضبط كمية ومدة الاستخدام اللي حددها لك الطبيب. لو نسيت جرعة، حطها أول ما تتذكر وكمل بعدها بالمواعيد العادية.",
+      "sideEffects": [
+        {
+          "symptom": "تهيج أو حرقان أو وخز مكان الدهان",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "احمرار الجلد",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "حكة",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "طفح جلدي",
+          "detectableBy": "caregiver_or_touch"
+        }
+      ],
+      "seriousWarningSigns": [
+        {
+          "symptom": "صعوبة بالتنفس",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "تورم بالوجه أو الحلق",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "طفح جلدي حاد",
+          "detectableBy": "caregiver_or_touch"
+        }
+      ],
+      "warning": "إذا صار أي من علامات الحساسية الخطيرة (صعوبة تنفس، تورم بالوجه أو الحلق، طفح جلدي حاد) — لازم استشارة طبية عاجلة فورًا.",
+      "sourceNote": "مأخوذ من نشرة معلومات المريض (PIL) الرسمية بنظام SDI التابع لـ SFDA، مصاغ بعامية سعودية.",
+      "purposeCategory": "مضاد حيوي موضعي للجلد"
+    },
+    {
+      "id": "MED-002",
+      "tradeName": {
+        "ar": "ريباريل جل إن",
+        "en": "Reparil-Gel N"
+      },
+      "genericName": {
+        "ar": "إيسين + دايإيثيل أمين ساليسيلات",
+        "en": "Aescin, Diethylamine Salicylate"
+      },
+      "dosageForm": "جل موضعي",
+      "strength": "5.1%",
+      "legalStatus": "Rx",
+      "dosageInstructions_saudi_dialect": "هذا جل مضاد للالتهاب والتورم. هذا الجل يستخدم على الجلد بس، لا تبلعه. يستخدم للبالغين والأطفال فوق ١٢ سنة — ما يُنصح باستخدامه لمن هم أقل من ١٢ سنة. حط كمية صغيرة، تقريبًا ملء رأس إصبعك، على المنطقة المصابة، ووزعها برفق بأطراف أصابعك، ثلاث مرات باليوم. خله يجف على الجلد شوي قبل ما تحط أي رباط أو ضمادة فوقه. لا تتجاوز ملء كف يدك تقريبًا من الجل باليوم كحد أقصى. لو نسيت جرعة، لا تعوضها بجرعة مضاعفة — بس كمل بالمواعيد العادية. لو ما تحسنت الحالة أو زادت سوء بعد يومين، راجع الطبيب.",
+      "sideEffects": [
+        {
+          "symptom": "جفاف الجلد",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "احمرار الجلد",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "حكة أو تهيج",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "طفح جلدي (أرتيكاريا)",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "تقشر الجلد",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "إكزيما (نادر جدًا)",
+          "detectableBy": "caregiver_or_touch"
+        }
+      ],
+      "seriousWarningSigns": [
+        {
+          "symptom": "تفاعل حساسية شديد (كحة، ضيق تنفس، تورم)",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "أعراض تؤثر على الكبد أو الكلى أو المعدة عند استخدام كميات كبيرة على مساحة واسعة من الجلد",
+          "detectableBy": "patient"
+        }
+      ],
+      "warning": "يحتوي على زيت اللافندر وزيت البرتقال المر (مكونات عطرية) ممكن تسبب حساسية عند بعض الأشخاص. لا يُنصح للأطفال تحت ١٢ سنة.",
+      "sourceNote": "مأخوذ من نشرة معلومات المريض (PIL) الرسمية بنظام SDI التابع لـ SFDA، مصاغ بعامية سعودية.",
+      "purposeCategory": "جل مضاد للالتهاب والتورم"
+    },
+    {
+      "id": "MED-003",
+      "tradeName": {
+        "ar": "سترسلز",
+        "en": "Strepsils Sugar Free Lemon"
+      },
+      "genericName": {
+        "ar": "أميل ميتاكريزول + كحول ثنائي كلورو بنزيل",
+        "en": "Amylmetacresol, 2,4-Dichlorobenzyl Alcohol"
+      },
+      "dosageForm": "أقراص مص (لوزنجز)",
+      "strength": "0.6 mg, 1.2 mg",
+      "legalStatus": "OTC",
+      "dosageInstructions_saudi_dialect": "هذا دواء لالتهاب والتهيج بالحلق. مصّ قرص وحدة ببطء خلي يذوب بفمك من دون ما تمضغه أو تبلعه كامل، وكرر كل ٢ إلى ٣ ساعات إذا احتجت. ما تتجاوز ٨ أقراص خلال ٢٤ ساعة. ما يُعطى للأطفال أقل من ٦ سنوات.",
+      "sideEffects": [
+        {
+          "symptom": "تنميل خفيف بالفم أو اللسان (مؤقت)",
+          "detectableBy": "patient"
+        }
+      ],
+      "sourceNote": "المادة الفعالة مؤكدة من موقع الشركة المصنعة الرسمي (بديل عن نشرة SFDA لأن المنتج غير مسجل بنظام SDI باسمه التجاري).",
+      "purposeCategory": "دواء لالتهاب والتهيج بالحلق"
+    },
+    {
+      "id": "MED-004",
+      "tradeName": {
+        "ar": "فليكسول ألترا",
+        "en": "Flexall Ultra"
+      },
+      "genericName": {
+        "ar": "جلوكوزامين هيدروكلورايد، إم إس إم، كالسيوم فركتوبورات، كوندرويتين، هيالورونات الصوديوم",
+        "en": "Glucosamine HCl, MSM, Calcium Fructoborate, Chondroitin, Sodium Hyaluronate"
+      },
+      "dosageForm": "أقراص مغلفة",
+      "strength": "500,500,72,66.7,1.1 mg",
+      "legalStatus": "OTC",
+      "dosageInstructions_saudi_dialect": "هذا مكمل لصحة المفاصل. يؤخذ عن طريق الفم مع الأكل، عادة قرص واحد إلى قرصين باليوم (الجرعة الدقيقة تحتاج تأكيد من الصيدلي لأنه ما فيه نشرة رسمية متوفرة لهذا المنتج بالذات). هذا مكمل لصحة المفاصل، خذه بانتظام يوميًا عشان تحس بالفايدة على المدى الطويل.",
+      "sideEffects": [
+        {
+          "symptom": "اضطراب بسيط بالمعدة",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "غثيان خفيف (نادر)",
+          "detectableBy": "patient"
+        }
+      ],
+      "sourceNote": "لا توجد نشرة معلومات مريض (PIL) مرفوعة على نظام SDI لهذا المنتج — الصياغة اعتمدت على المعرفة العامة القياسية للمادة الفعالة، وتحتاج مراجعة صيدلي قبل الاستخدام بالتطبيق.",
+      "purposeCategory": "مكمل لصحة المفاصل"
+    },
+    {
+      "id": "MED-005",
+      "tradeName": {
+        "ar": "ريليف",
+        "en": "Relif 200 mg Capsule"
+      },
+      "genericName": {
+        "ar": "سيليكوكسيب",
+        "en": "Celecoxib"
+      },
+      "dosageForm": "كبسولة",
+      "strength": "200 mg",
+      "legalStatus": "Rx",
+      "dosageInstructions_saudi_dialect": "هذا مسكن للألم ومضاد للالتهاب. يؤخذ عن طريق الفم مع الأكل حسب جرعة الطبيب، عادة كبسولة وحدة مرة أو مرتين باليوم. لا تزيد الجرعة من نفسك، وإذا نسيت جرعة لا تاخذ جرعتين مع بعض.",
+      "sideEffects": [
+        {
+          "symptom": "حرقان أو ألم بالمعدة",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "صداع",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "دوخة",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "انتفاخ أو احتباس سوائل",
+          "detectableBy": "patient"
+        }
+      ],
+      "warning": "دواء يحتاج متابعة طبية، خصوصًا لمرضى القلب أو الكلى — لازم يستمر تحت إشراف الطبيب.",
+      "sourceNote": "لا توجد نشرة معلومات مريض (PIL) مرفوعة على نظام SDI لهذا المنتج — الصياغة اعتمدت على المعرفة العامة القياسية للمادة الفعالة، وتحتاج مراجعة صيدلي قبل الاستخدام بالتطبيق.",
+      "purposeCategory": "مسكن للألم ومضاد للالتهاب"
+    },
+    {
+      "id": "MED-006",
+      "tradeName": {
+        "ar": "إيريوس",
+        "en": "Aerius 5 mg Tablets"
+      },
+      "genericName": {
+        "ar": "ديسلوراتادين",
+        "en": "Desloratadine"
+      },
+      "dosageForm": "أقراص مغلفة",
+      "strength": "5 mg",
+      "legalStatus": "OTC",
+      "dosageInstructions_saudi_dialect": "هذا دواء للحساسية. يستخدم للبالغين والمراهقين من عمر ١٢ سنة فأكثر. قرص واحد فقط باليوم عن طريق الفم، تبلعه كامل مع الماء، مع الأكل أو من دونه. مدة العلاج يحددها الطبيب حسب نوع الحساسية عندك — لو الأعراض متقطعة (أقل من ٤ أيام بالأسبوع) بيعطيك جدول علاج معين، ولو الأعراض مستمرة (٤ أيام أو أكثر بالأسبوع لأكثر من ٤ أسابيع) ممكن يوصي بفترة علاج أطول. لو نسيت جرعة، خذها أول ما تتذكر وارجع لجدولك المعتاد — لا تاخذ جرعتين مع بعض.",
+      "sideEffects": [
+        {
+          "symptom": "إرهاق أو تعب",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "جفاف الفم",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "صداع",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "دوخة",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "نعاس",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "ألم بالمعدة",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "غثيان",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "إسهال",
+          "detectableBy": "patient"
+        }
+      ],
+      "seriousWarningSigns": [
+        {
+          "symptom": "صعوبة بالتنفس",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "صفير عند التنفس",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "حكة شديدة",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "شرى (طفح شديد)",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "تورم بالجسم",
+          "detectableBy": "caregiver_or_touch"
+        }
+      ],
+      "warning": "لو صارت أي علامة حساسية شديدة (صعوبة تنفس، تورم، شرى) — أوقف الدواء فورًا واطلب مساعدة طبية عاجلة.",
+      "sourceNote": "مأخوذ من نشرة معلومات المريض (PIL) الرسمية بنظام SDI التابع لـ SFDA، مصاغ بعامية سعودية.",
+      "purposeCategory": "دواء للحساسية"
+    },
+    {
+      "id": "MED-007",
+      "tradeName": {
+        "ar": "بلافيكس",
+        "en": "Plavix 75 mg Tablet"
+      },
+      "genericName": {
+        "ar": "كلوبيدوقرِل",
+        "en": "Clopidogrel"
+      },
+      "dosageForm": "أقراص مغلفة",
+      "strength": "75 mg",
+      "legalStatus": "Rx",
+      "dosageInstructions_saudi_dialect": "هذا دواء لمنع تجلط الدم، يستخدم لمرضى القلب والشرايين. قرص واحد بس من بلافيكس ٧٥ ملجم باليوم، عن طريق الفم، مع الأكل أو من دونه، وحاول تاخذه بنفس الوقت كل يوم. هذا دواء يمنع تجلط الدم، لازم تكمله طول الفترة اللي حددها الطبيب — لا توقفه من نفسك أبدًا، اتصل بالطبيب أو الصيدلي قبل أي وقف للعلاج. لو نسيت جرعة وتذكرت خلال ١٢ ساعة، خذها فورًا وكمل بجرعتك التالية بوقتها المعتاد. لو تجاوزت ١٢ ساعة، تجاهل الجرعة الفايتة وخذ الجرعة التالية عادي — لا تاخذ جرعتين مع بعض.",
+      "sideEffects": [
+        {
+          "symptom": "نزيف أسهل من المعتاد (كدمات، نزيف أنف، دم بالبول)",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "إسهال",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "ألم بالبطن",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "حرقان أو عسر هضم",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "صداع",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "دوخة",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "غثيان أو تقيؤ",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "إمساك",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "طفح جلدي أو حكة",
+          "detectableBy": "caregiver_or_touch"
+        }
+      ],
+      "warning": "دواء مانع لتجلط الدم — أي نزيف غير طبيعي أو مطوّل يحتاج اتصال فوري بالطبيب. لا يوقف العلاج أبدًا من دون استشارة الطبيب.",
+      "seriousWarningSigns": [
+        {
+          "symptom": "حمى أو تعب شديد أو أعراض عدوى",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "اصفرار الجلد أو العينين (يرقان)",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "تورم بالفم أو طفح جلدي شديد أو انقلاع الجلد",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "نزيف لا يتوقف أو نزيف غير طبيعي",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "ألم حاد بالبطن مع أو بدون ألم بالظهر",
+          "detectableBy": "patient"
+        }
+      ],
+      "sourceNote": "مأخوذ من نشرة معلومات المريض (PIL) الرسمية بنظام SDI التابع لـ SFDA، مصاغ بعامية سعودية.",
+      "purposeCategory": "دواء لمنع تجلط الدم، يستخدم لمرضى القلب والشرايين"
+    },
+    {
+      "id": "MED-008",
+      "tradeName": {
+        "ar": "ليبيتور",
+        "en": "Lipitor 20 mg"
+      },
+      "genericName": {
+        "ar": "أتورفاستاتين",
+        "en": "Atorvastatin"
+      },
+      "dosageForm": "أقراص مغلفة",
+      "strength": "20 mg",
+      "legalStatus": "Rx",
+      "dosageInstructions_saudi_dialect": "هذا دواء لخفض الكوليسترول. قرص وحدة باليوم، ويفضل بنفس الوقت كل مرة، مع الأكل أو من دونه. يستمر عليه على المدى الطويل حسب توجيه الطبيب حتى لو نتائج التحاليل تحسنت.",
+      "sideEffects": [
+        {
+          "symptom": "ألم أو تعب بالعضلات",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "اضطراب بسيط بالمعدة",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "صداع",
+          "detectableBy": "patient"
+        }
+      ],
+      "warning": "إذا حسيت ألم عضلي قوي وغير طبيعي، أخبر طبيبك.",
+      "purposeCategory": "دواء لخفض الكوليسترول"
+    },
+    {
+      "id": "MED-009",
+      "tradeName": {
+        "ar": "بيلوسين",
+        "en": "Pilocin Cream"
+      },
+      "genericName": {
+        "ar": "تريبينوسايد + ليدوكايين هيدروكلورايد",
+        "en": "Tribenoside, Lidocaine HCl"
+      },
+      "dosageForm": "كريم",
+      "strength": "50 mg/g, 20 mg/g",
+      "legalStatus": "Rx",
+      "dosageInstructions_saudi_dialect": "هذا دواء لعلاج البواسير. لو الأعراض قوية: استخدم الكريم على مكان الألم مرتين باليوم (صباحًا ومساءً). لو الأعراض خفت: استخدمه مرة وحدة باليوم بس. لا تتجاوز الجرعة الموصى بها. تجنب ملامسته للعين أو الفم، ولا تبلعه. لا يُستخدم للأطفال إلا باستشارة الطبيب. استمر عليه لين الأعراض تختفي تمامًا — لو استمرت الأعراض أكثر من أسبوع، راجع الطبيب. لو نسيت جرعة، لا تعوضها بجرعة مضاعفة — استخدمه عادي بموعد الجرعة الجاية.",
+      "sideEffects": [
+        {
+          "symptom": "حرقان مكان الاستخدام (نادر)",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "حكة مكان الاستخدام (نادر)",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "احمرار قد ينتشر خارج منطقة الاستخدام (نادر)",
+          "detectableBy": "caregiver_or_touch"
+        }
+      ],
+      "seriousWarningSigns": [
+        {
+          "symptom": "تورم بالوجه أو الشفايف أو اللسان أو الحلق",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "صعوبة بالبلع أو التنفس",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "حكة شديدة بالجلد",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "عدم انتظام ضربات القلب",
+          "detectableBy": "patient"
+        }
+      ],
+      "warning": "لو ظهرت أي علامة حساسية شديدة (تورم، صعوبة تنفس أو بلع) — أوقف الاستخدام فورًا واتصل بالطبيب على الفور. الكريم فيه مواد حافظة (سيتيل الكحول، بارابين) ممكن تسبب حساسية جلدية عند بعض الأشخاص.",
+      "sourceNote": "مأخوذ من نشرة معلومات المريض (PIL) الرسمية بنظام SDI التابع لـ SFDA، مصاغ بعامية سعودية.",
+      "purposeCategory": "دواء لعلاج البواسير"
+    },
+    {
+      "id": "MED-010",
+      "tradeName": {
+        "ar": "إيميدول",
+        "en": "Emidol 500 mg Tablets"
+      },
+      "genericName": {
+        "ar": "باراسيتامول",
+        "en": "Paracetamol"
+      },
+      "dosageForm": "أقراص",
+      "strength": "500 mg",
+      "legalStatus": "OTC",
+      "dosageInstructions_saudi_dialect": "هذا مسكن للألم وخافض للحرارة. للبالغين والأطفال فوق ١٦ سنة: قرص إلى قرصين كل ٤ إلى ٦ ساعات حسب الحاجة، ولا تتجاوز ٨ أقراص خلال ٢٤ ساعة. للأطفال من ١٠ إلى ١٥ سنة: قرص واحد بس كل ٤ إلى ٦ ساعات، ولا تتجاوز ٤ أقراص خلال ٢٤ ساعة. لا يُعطى للأطفال أقل من ١٠ سنوات. لا تاخذ جرعة ثانية قبل ما تمر ٤ ساعات على الجرعة اللي قبلها. لا يستخدم أكثر من ٣ أيام متواصلة إلا لو الطبيب قال لك غير كذا.",
+      "sideEffects": [
+        {
+          "symptom": "نادرًا ما يسبب أعراض جانبية بالجرعة الطبيعية",
+          "detectableBy": "patient"
+        }
+      ],
+      "warning": "تجاوز الجرعة اليومية القصوى (٨ أقراص/٢٤ ساعة للبالغين) يسبب تلف خطير ومتأخر بالكبد — حتى لو حسيت إنك تمام بعد جرعة زايدة، لازم تستشير الطبيب فورًا. لو ظهر أي طفح جلدي أو صعوبة تنفس، أوقف الدواء فورًا واطلب مساعدة طبية.",
+      "seriousWarningSigns": [
+        {
+          "symptom": "حساسية شديدة (طفح جلدي، حكة، تورم بالفم أو الوجه، ضيق تنفس)",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "طفح جلدي أو تقشر الجلد أو تقرحات بالفم",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "مشاكل بالتنفس",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "كدمات أو نزيف بدون سبب واضح",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "غثيان مع فقدان وزن مفاجئ أو فقدان شهية",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "اصفرار العينين والجلد",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "طفح جلدي شديد مع بثور، أو حرارة بالجلد وحكة قوية غير معتادة (تفاعلات جلدية خطيرة نادرة)",
+          "detectableBy": "caregiver_or_touch"
+        }
+      ],
+      "sourceNote": "مأخوذ من نشرة معلومات المريض (PIL) الرسمية بنظام SDI التابع لـ SFDA، مصاغ بعامية سعودية.",
+      "purposeCategory": "مسكن للألم وخافض للحرارة"
+    },
+    {
+      "id": "MED-011",
+      "tradeName": {
+        "ar": "أوتريفين",
+        "en": "Otrivin Dosing Spray 0.1%"
+      },
+      "genericName": {
+        "ar": "زيلوميتازولين هيدروكلورايد",
+        "en": "Xylometazoline Hydrochloride"
+      },
+      "dosageForm": "بخاخ أنف",
+      "strength": "0.1%",
+      "legalStatus": "OTC",
+      "dosageInstructions_saudi_dialect": "هذا بخاخ لاحتقان الأنف. للبالغين والمراهقين من عمر ١٢ سنة فأكثر بس — لا يستخدم للأطفال أقل من ١٢ سنة. بخة واحدة بكل فتحة أنف، وكرره حسب الحاجة، عادة يكفي ٣ مرات باليوم. استخدامه بالأنف بس، لا تحطه بالفم أو العين. يفضل يكون آخر استخدام قبل النوم بفترة قصيرة. لا تستخدمه أكثر من أسبوع لأن الاستخدام الطويل يضر الغشاء المخاطي بالأنف. لو نسيت جرعة، لا تعوضها بجرعة مضاعفة.",
+      "sideEffects": [
+        {
+          "symptom": "جفاف أو تهيج بالأنف",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "غثيان",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "صداع",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "حرقان موضعي خفيف",
+          "detectableBy": "patient"
+        }
+      ],
+      "seriousWarningSigns": [
+        {
+          "symptom": "صعوبة بالتنفس أو البلع",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "تورم بالوجه أو الشفايف أو اللسان أو الحلق",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "حكة شديدة بالجلد مع طفح أو احمرار",
+          "detectableBy": "caregiver_or_touch"
+        },
+        {
+          "symptom": "عدم انتظام ضربات القلب",
+          "detectableBy": "patient"
+        }
+      ],
+      "warning": "لا يستخدم أكثر من ٧ أيام متواصلة. لو ظهرت علامات حساسية شديدة (صعوبة تنفس، تورم بالوجه) — أوقف الاستخدام فورًا واطلب مساعدة طبية.",
+      "sourceNote": "مأخوذ من نشرة معلومات المريض (PIL) الرسمية بنظام SDI التابع لـ SFDA، مصاغ بعامية سعودية.",
+      "purposeCategory": "بخاخ لاحتقان الأنف"
+    },
+    {
+      "id": "MED-012",
+      "tradeName": {
+        "ar": "جوينت إيس كولاجين",
+        "en": "Jointace Collagen Tablet"
+      },
+      "genericName": {
+        "ar": "جلوكوزامين سلفات، كولاجين نوع ٢، كوندرويتين، نحاس، مستخلص الزنجبيل، منجنيز، توكوفيرول، أكسيد الزنك، حمض الأسكوربيك، كوليكالسيفيرول، سيانوكوبالامين، حمض الفوليك، سيلينيوم سلفايد",
+        "en": "Glucosamine Sulfate, Collagen Type II, Chondroitin, Copper, Ginger Extract, Manganese, Tocopherol, Zinc Oxide, Ascorbic Acid, Cholecalciferol, Cyanocobalamin, Folic Acid, Selenium Sulfide"
+      },
+      "dosageForm": "أقراص",
+      "strength": "500,150,50,0.50,40,2,20,5,30,5,10,200,60 mg",
+      "legalStatus": "OTC",
+      "dosageInstructions_saudi_dialect": "هذا مكمل لصحة المفاصل والغضاريف. قرص واحد باليوم مع الأكل، للمحافظة على صحة الغضاريف والمفاصل. مكمل غذائي يستمر عليه يوميًا وبانتظام حتى تظهر الفايدة على المدى الطويل.",
+      "sideEffects": [
+        {
+          "symptom": "اضطراب بسيط بالمعدة (نادر)",
+          "detectableBy": "patient"
+        }
+      ],
+      "sourceNote": "لا توجد نشرة معلومات مريض (PIL) مرفوعة على نظام SDI لهذا المنتج — الصياغة اعتمدت على المعرفة العامة القياسية للمكمل الغذائي، وتحتاج مراجعة صيدلي قبل الاستخدام بالتطبيق.",
+      "purposeCategory": "مكمل لصحة المفاصل والغضاريف"
+    },
+    {
+      "id": "MED-013",
+      "tradeName": {
+        "ar": "فيفادول بلس",
+        "en": "Fevadol Plus"
+      },
+      "genericName": {
+        "ar": "باراسيتامول + كودايين فوسفات + كافيين",
+        "en": "Paracetamol, Codeine Phosphate, Caffeine"
+      },
+      "dosageForm": "أقراص",
+      "strength": "500,8,30 mg",
+      "legalStatus": "Rx",
+      "dosageInstructions_saudi_dialect": "هذا مسكن قوي للألم. قرص إلى قرصين كل ٤ إلى ٦ ساعات عند الحاجة للألم، وما تتجاوز ٨ أقراص باليوم. فيه مادة الكودايين اللي ممكن تسبب نعاس، فتجنب قيادة السيارة بعد أخذه، وما تستخدمه لفترة طويلة بدون استشارة الطبيب لأنه ممكن يسبب اعتماد.",
+      "sideEffects": [
+        {
+          "symptom": "نعاس",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "إمساك",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "غثيان",
+          "detectableBy": "patient"
+        },
+        {
+          "symptom": "دوخة",
+          "detectableBy": "patient"
+        }
+      ],
+      "warning": "يحتوي على مادة مخدرة (كودايين) خاضعة للرقابة — الاستخدام يكون فقط حسب وصفة الطبيب وللمدة المحددة.",
+      "sourceNote": "لا توجد نشرة معلومات مريض (PIL) مرفوعة على نظام SDI لهذا المنتج — الصياغة اعتمدت على المعرفة العامة القياسية للمادة الفعالة، وتحتاج مراجعة صيدلي قبل الاستخدام بالتطبيق. مهم بشكل خاص لهذا الدواء لاحتوائه على مادة الكودايين المخدرة.",
+      "purposeCategory": "مسكن قوي للألم"
+    },
+    {
+      "id": "MED-014",
+      "tradeName": {
+        "ar": "ريباريل ٢٠ ملجم",
+        "en": "Reparil 20mg Tab"
+      },
+      "genericName": {
+        "ar": "إيسين",
+        "en": "Aescin"
+      },
+      "dosageForm": "أقراص مغلفة",
+      "strength": "20 mg",
+      "legalStatus": "Rx",
+      "dosageInstructions_saudi_dialect": "هذا دواء لتحسين الدورة الدموية بالأوردة وتقليل التورم. للبالغين والمراهقين من سن ١٤ سنة فأكثر: بالبداية قرصين ثلاث مرات باليوم، وبعدين كجرعة محافظة (أو بالحالات الأخف) قرص واحد ثلاث مرات باليوم. للأطفال من ٧ إلى ١٤ سنة: قرص واحد مرتين إلى ثلاث مرات باليوم. يؤخذ بدون مضغ مع شوية سوائل، بعد الوجبات. ما فيه حد معين لمدة العلاج — يستمر حسب الحاجة. لو نسيت جرعة، لا تعوضها بجرعة مضاعفة.",
+      "sideEffects": [
+        {
+          "symptom": "اضطرابات بالجهاز الهضمي (غير شائعة)",
+          "detectableBy": "patient"
+        }
+      ],
+      "seriousWarningSigns": [
+        {
+          "symptom": "تفاعل حساسية (أرتيكاريا / طفح جلدي شديد) — نادر جدًا",
+          "detectableBy": "caregiver_or_touch"
+        }
+      ],
+      "warning": "لو صار تفاعل حساسية (أرتيكاريا)، لازم توقف الدواء فورًا.",
+      "sourceNote": "مأخوذ من نشرة معلومات المريض (PIL) الرسمية بنظام SDI التابع لـ SFDA، مصاغ بعامية سعودية.",
+      "purposeCategory": "دواء لتحسين الدورة الدموية بالأوردة وتقليل التورم"
+    }
+  ]
+}
