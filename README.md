@@ -1,4 +1,4 @@
-# Waseel — واصل
+# Waseel — وسيل
 ### A voice-first medication companion for visually impaired Saudi Arabic speakers
 AI Readiness Hackathon submission.
 
