@@ -1,0 +1,6 @@
+easyocr
+gTTS
+anthropic
+opencv-contrib-python-headless
+SpeechRecognition
+numpy
