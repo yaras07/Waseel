@@ -61,16 +61,6 @@ this prototype:
   choices in this repo (modular pipeline stages, grounded LLM, audit logging)
   map directly onto that toolkit's self-assessment checklist.
 
-## What changed from the original team files
-
-See the accompanying chat message for the full list — in short: `waseel_db.py`
-gained `pairing_codes`, `scheduled_reminders`, and `audit_log` tables (plus a
-`caregiver_visual_check_needed` flag on medication logs); Abrar's LLM/TTS code
-was rebuilt from her PDF (the PDF text extraction had corrupted the Arabic RTL
-text and some f-strings); Ghala's OCR matching was adapted to the real
-`tradeName: {ar, en}` / flat-string `dosageForm` schema actually used in
-`waseel_knowledge_base.json` (her original code expected a different shape).
-
 ## Known limitations for judges
 
 - Face verification (OpenCV LBPH) is demo-grade, not a production biometric
